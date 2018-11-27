@@ -17,6 +17,14 @@ class MockPersistence(Persistence):
         return self.data
 
 
+intro_text = """
+    Add <text> - Add a new todo task
+    Do #<id> - Complete the task with <id>
+    Print - Print all pending tasks
+    Quit - Exit the program
+"""
+
+
 class ConsoleAppTest(TestCase):
     def setUp(self):
         self.outputs = []
@@ -37,6 +45,7 @@ class ConsoleAppTest(TestCase):
     def test_adds_tasks_and_persists(self):
         self.inputs = ["print", "add Write integration tests", "print"]
         expected_outputs = [
+            intro_text,
             "No notes",
             "#1 Write integration tests",
             "#1 Write integration tests",
@@ -52,7 +61,7 @@ class ConsoleAppTest(TestCase):
     def test_completes_task(self):
         self.data.update({"2": {"id": 2, "text": "First", "completed": False}})
         self.inputs = ["print", "do 2", "print"]
-        expected_outputs = ["#2 First", "Completed #2 First", "No notes"]
+        expected_outputs = [intro_text, "#2 First", "Completed #2 First", "No notes"]
 
         self.assertEqual(1, len(self.data))
 
@@ -65,6 +74,7 @@ class ConsoleAppTest(TestCase):
         self.data.update({"2": {"id": 2, "text": "First", "completed": False}})
         self.inputs = ["print", "add Write integration tests", "print"]
         expected_outputs = [
+            intro_text,
             "#2 First",
             "#3 Write integration tests",
             "#2 First\n#3 Write integration tests",
@@ -78,7 +88,8 @@ class ConsoleAppTest(TestCase):
     def test_has_sensible_error_messages(self):
         self.inputs = ["prant", "add", "do #7"]
         expected_outputs = [
-            "Unknown command",
+            intro_text,
+            "Unknown command, type 'help' for a list of valid commands",
             "Missing description for task",
             "Cannot find task #7",
         ]
